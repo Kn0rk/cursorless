@@ -48,10 +48,14 @@ export class KeyboardCommandsModalLayer<Param extends { type: any }> {
 
       if (values.length === 0) {
         // If we haven't consumed any input yet, then it means the first
-        // character was a false start so we should cancel the whole thing.
-        const errorMessage = `Invalid key '${text}'`;
-        vscode.window.showErrorMessage(errorMessage);
-        throw Error(errorMessage);
+        // character was a false start so fall through and insert the character instead.
+        // write text to the editor so the user can see what they typed
+        vscode.window.activeTextEditor?.edit((editBuilder) => {
+          editBuilder.insert(
+            vscode.window.activeTextEditor!.selection.active,
+            text,
+          );
+        });
       }
     }
 
